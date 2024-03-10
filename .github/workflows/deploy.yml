@@ -11,6 +11,9 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
+    container: # node:16
+      image: node:16
+      # env: # To pass environment variable argument.
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb+srv
       MONGODB_CLUSTER_ADDRESS: mongocluster0.s0kclfo.mongodb.net
