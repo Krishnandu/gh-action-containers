@@ -44,7 +44,7 @@ stages:
     - script: npm ci
       displayName: 'Install dependencies'
 
-    - script: npm start & npx wait-on http://127.0.0.1:$(PORT)
+    - script: npm start & npx wait-on http://127.0.0.1:8080
       displayName: 'Run server'
 
     - script: npm test
