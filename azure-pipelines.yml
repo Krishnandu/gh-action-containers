@@ -1,0 +1,57 @@
+trigger: none
+#  branches:
+#    include:
+#    - main
+#    - dev
+
+variables:
+  CACHE_KEY: node-deps
+  MONGODB_DB_NAME: gha-demo
+  MONGODB_CONNECTION_PROTOCOL: mongodb
+  MONGODB_CLUSTER_ADDRESS: 127.0.0.1:27017
+  MONGODB_USERNAME: root
+  MONGODB_PASSWORD: example
+  PORT: 8080
+
+stages:
+- stage: BuildTest
+  jobs:
+  - job: Test
+    pool:
+      vmImage: 'ubuntu-latest'
+    container: node:16
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: --env MONGO_INITDB_ROOT_USERNAME=root --env MONGO_INITDB_ROOT_PASSWORD=example
+    steps:
+    - checkout: self
+    - task: Cache@2
+      inputs:
+        key:
+        path:
+        restoreKeys:
+    - script: npm ci
+      displayName: 'Install dependencies'
+    - script: npm start & npx wait-on http://127.0.0.1:$(PORT)
+      displayName: 'Run server'
+    - script: npm test
+      displayName: 'Run tests'
+    - script: |
+        echo "MONGODB_USERNAME: $(MONGODB_USERNAME)"
+      displayName: 'Output information'
+- stage: Deploy
+  dependsOn: BuildTest
+  condition: succeeded()
+  jobs:
+  - job: DeployJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        echo "MONGODB_DB_NAME: $(MONGODB_DB_NAME)"
+        echo "MONGODB_USERNAME: $(MONGODB_USERNAME)"
+        echo "$(PORT)"
+      displayName: 'Output deployment information'
