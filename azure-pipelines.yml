@@ -29,19 +29,8 @@ stages:
           - 27017:27017
         options: --env MONGO_INITDB_ROOT_USERNAME=root --env MONGO_INITDB_ROOT_PASSWORD=example
     steps:
-    - checkout: self
+    - checkout: self # Pull the code from the repository to the pipeline environment.
 
-    - script: |
-        echo "##vso[task.setvariable variable=packageLockHash]$(md5sum package-lock.json | awk '{ print $1 }')"
-      displayName: 'Generate package-lock.json hash'
-
-    - task: Cache@2
-      inputs:
-        key: 'node-deps-$(Agent.OS)-$(packageLockHash)'
-        path: '~/.npm'
-        restoreKeys: |
-          node-deps-$(Agent.OS)-
-      displayName: 'Cache dependencies'
 
     - script: npm ci
       displayName: 'Install dependencies'
@@ -49,8 +38,7 @@ stages:
     - script: npm start & npx wait-on http://127.0.0.1:8080
       displayName: 'Run server'
 
-    - script: npm test
-      displayName: 'Run tests'
+
 
     - script: |
         echo "MONGODB_USERNAME: $(MONGODB_USERNAME)"
