@@ -20,7 +20,7 @@ jobs:
       # env: # To pass environment variable argument.
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb
-      MONGODB_CLUSTER_ADDRESS: 127.0.0.1:27017 # mongodb # 127.0.0.1
+      MONGODB_CLUSTER_ADDRESS: mongodb # 127.0.0.1 # 127.0.0.1:27017
       MONGODB_USERNAME: root # ${{ vars.MONGODB_USERNAME }}
       MONGODB_PASSWORD: example # ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
