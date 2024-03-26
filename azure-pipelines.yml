@@ -19,6 +19,8 @@ stages:
   - job: Test
     pool:
       vmImage: 'ubuntu-latest'
+        # Run the job inside a Docker container that uses the node:16 image. Isolated environment within the VM.
+        # This eleminates the need to install Node.js as a separate step. 
     container: node:16
     services:
       mongodb:
